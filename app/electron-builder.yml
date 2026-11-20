@@ -107,7 +107,8 @@ win:
     # the tray's colour icons (tray.ts; @2x next to them), a Mac uses its template tray.png
     - { from: resources, to: ., filter: ["tray-color*.png", "tray-recording*.png"] }
     # bundled Node.js + DSH CLI + all 5 meeting plugins (dsh-knowledge, soulmirror, computer-use, tencent-meeting, dsh-meeting-host)
-    - { from: resources/dsh-bundle, to: dsh-bundle }
+    - { from: resources/dsh-bundle, to: dsh-bundle, filter: ["**/*"] }
+    - { from: resources/dsh-bundle/node_modules, to: dsh-bundle/node_modules, filter: ["**/*"] }
   artifactName: Yogurt-windows-${arch}.${ext}
   target:
     - target: nsis

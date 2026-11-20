@@ -115,16 +115,23 @@ async function ensurePackagedDshHomeSeeded(bundleDir: string, dshHome: string): 
     await copyFile(patchSrc, patchDst);
   }
 
-  // 将内置的 node_modules（含 5 个插件）通过目录联接挂载到用户 Profile，无需管理员权限且升级自动同步
+  // 将内置的 node_modules（含 5 个插件）通过目录联接挂载到用户 Profile，无需管理员权限且便携版每次启动自动指向最新解压目录
   const nmSrc = join(tplDir, 'node_modules');
   const nmDst = join(targetProfile, 'node_modules');
   if (existsSync(nmSrc)) {
     try {
-      if (existsSync(nmDst)) {
+      let needLink = true;
+      try {
         const st = lstatSync(nmDst);
-        if (st.isSymbolicLink()) await rm(nmDst, { recursive: true, force: true });
+        if (st.isSymbolicLink()) {
+          await rm(nmDst, { recursive: true, force: true });
+        } else {
+          needLink = false;
+        }
+      } catch {
+        // 目标尚不存在，直接创建联接
       }
-      if (!existsSync(nmDst) && process.platform === 'win32') {
+      if (needLink && process.platform === 'win32') {
         execFileSync('cmd', ['/c', 'mklink', '/J', nmDst, nmSrc], { windowsHide: true, stdio: 'ignore' });
       }
     } catch (err) {
@@ -308,7 +315,7 @@ async function startEmbeddedProfile(): Promise<{ ok: boolean; baseUrl: string; w
     child.stderr?.on('data', captureStartupUrl);
   }
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     await new Promise((r) => setTimeout(r, 500));
     if (await isDshProfileAlive()) return { ok: true, baseUrl: DEFAULT_BASE_URL, webUrl: dshWebUrl };
     if (!dshChild) break;
