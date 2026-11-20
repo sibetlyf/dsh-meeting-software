@@ -1,0 +1,8 @@
+- insert:
+    - id: dsh-meeting-host
+      name: dsh-meeting-host
+      config:
+        path: /api/dsh-meeting
+        artifactsDir: C:/Users/liyafeng/.dsh/artifacts/meetings
+        knowledgeBaseUrl: http://127.0.0.1:3090
+

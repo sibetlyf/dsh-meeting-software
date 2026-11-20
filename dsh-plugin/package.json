@@ -1,0 +1,19 @@
+{
+  "name": "dsh-meeting-host",
+  "version": "0.1.0",
+  "description": "DSH 会议助手宿主插件：负责自然语言排会、腾讯/移动会议自动加入、制品双向同步与知识库留档",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "*",
+    "@deepseek-ai/schemastery": "*"
+  }
+}
